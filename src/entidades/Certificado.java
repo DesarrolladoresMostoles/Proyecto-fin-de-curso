@@ -1,22 +1,25 @@
 
 package entidades;
 
-public class Certificado extends Familia 
+public class Certificado extends Area
 {
   private  String   idCer="";
   private  String   nomCer="";
   private  String   comCer="";
   private  int      nvCer=0;
   private  String   regCer="";
-  private  int      famCer=-1;
+  private  String   areaCer="";
   private String    praCer=null;             // Módulo de prácticas
 
-  public Certificado(String idCer,String nomCer,String comCer,int nvCer,String regCer,int famCer,String praCer,Familia f) 
+  public Certificado(String idCer,String nomCer,String comCer,int nvCer,String regCer,String praCer,  
+                     String idpA,String despA,String idpF,String despF,int vigpF) 
   {
-    super(f);
+    super(idpA,despA,idpF,despF,vigpF);
     this.idCer=idCer; this.nomCer=nomCer; this.comCer=comCer; this.nvCer=nvCer; this.regCer=regCer; 
-    this.famCer=famCer; this.praCer=praCer;
+    this.areaCer=areaCer; this.praCer=praCer;
   }
+  public Certificado(Certificado f)  {   this(f.getIdCer(),f.getNomCer(), f.getComCer(),f.getNvCer(),f.getRegCer(),f.getPraCer(), 
+                                              f.getIdArea(),((Area)f).getDescripcion(),f.getIdFamilia(),((Familia)f).getDescripcion(),f.getVigencia() );  }
 
   public String getIdCer() { return idCer;  }
   public void setIdCer(String idCer) { this.idCer = idCer;  }
@@ -28,8 +31,8 @@ public class Certificado extends Familia
   public void setNvCer(int nvCer) { this.nvCer = nvCer; }
   public String getRegCer() {  return regCer; }
   public void setRegCer(String regCer) { this.regCer = regCer;  }
-  public int getFamCer() { return famCer; }
-  public void setFamCer(int famCer) { this.famCer = famCer; }
+  public String getAreaCer() { return areaCer; }
+  public void setAreaCer(String areaCer) { this.areaCer = areaCer; }
   public String getPraCer() { return praCer; }
   public void setPraCer(String praCer) { this.praCer = praCer; }
   

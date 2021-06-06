@@ -3,16 +3,20 @@ package entidades;
 
 public class Familia 
 {
-  private int       idFamilia=0;
-  private String    descripcion="";
+  private String     idFamilia="";
+  private String    descripcionF="";
+  private int       vigencia=0;
 
-  public Familia(int idp,String desp) 
+
+  public Familia(String idp,String desp,int vigp) 
   {
-    this.idFamilia = idp; this.descripcion = desp;
+    this.idFamilia = idp; this.descripcionF = desp; this.vigencia=vigp;
   }
-  public Familia(Familia f)  {   this(f.getIdFamilia(),f.getDescripcion() );  }
-  public int getIdFamilia() {  return idFamilia; }
-  public void setIdFamilia(int idFamilia) { this.idFamilia = idFamilia; }
-  public String getDescripcion() {  return descripcion; }
-  public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+  public Familia(Familia f)  {   this(f.getIdFamilia(),f.getDescripcion(),f.getVigencia() );  }
+  public String getIdFamilia() {  return idFamilia; }
+  public void setIdFamilia(String idFamilia) { this.idFamilia = idFamilia; }
+  public String getDescripcion() {  return descripcionF; }
+  public void setDescripcion(String descripcion) { this.descripcionF = descripcion; }
+  public int getVigencia() {  return vigencia;  }
+  public void setVigencia(int vigencia) {  this.vigencia = vigencia; }
 }

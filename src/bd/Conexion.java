@@ -4,45 +4,44 @@
  * and open the template in the editor.
  */
 package bd;
+
 import java.sql.Connection;   //API DE JAVA
 import java.sql.DriverManager;
 import java.sql.SQLException;
- /**
+
+/**
  * @author TERESA
  */
 public class Conexion {
-    
-        Connection conexion;
-        
-         String host="localhost:3306";   // ¿Donde me conecto.. a que servidor Mysql? esta variable es para url de conexion
-         String usuario="root"; // para usuario de conexion
-         String pwd="Drogon1981";     // para usuario de conexion
-         String nombreBBDD = "centroformacion"; //¿Donde me conecto.., a que BBDD? esta variable es para url de conexion
-       
-        // configuramos la conexion con las clases de java
-        String url = "jdbc:mysql://" + host + "/"+ nombreBBDD;
-        String zonaHoraria = "?serverTimezone=UTC";
-        
-    public Conexion() {
-        
-    }
-        
-    public Connection conectar() {
-            try {
-                
-                this.conexion=DriverManager.getConnection(url + zonaHoraria, usuario, pwd);
-                
-            } catch (Exception e) {
-                System.out.println("Ha ocurrido un error en la conexion: " + e.getMessage());
-            }
 
-            return this.conexion;
+    Connection conexion;
+
+    String host = "localhost:3306";   // ¿Donde me conecto.. a que servidor Mysql? esta variable es para url de conexion
+    String usuario = "root"; // para usuario de conexion
+    String pwd = "Drogon1981";     // para usuario de conexion
+    String nombreBBDD = "centroformacion";//¿Donde me conecto.., a que BBDD? esta variable es para url de conexion 
+
+    // configuramos la conexion con las clases de java
+    String url = "jdbc:mysql://" + host + "/" + nombreBBDD;
+    String zonaHoraria = "?serverTimezone=UTC";
+
+    public Conexion() {
+
+    }
+
+    public Connection conectar() {
+        try {
+
+            this.conexion = DriverManager.getConnection(url + zonaHoraria, usuario, pwd);
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error en la conexion: " + e.getMessage());
         }
-              
+
+        return this.conexion;
+    }
 
 }
-
-
 
 ///* NOTA INFORMATIVA
 //DESCRIPCIÓN: Realiza la conexión a diferentes tipos de bases de datos (mysql, sqlserver). Para ello  en  el metodo "Conectar" el tipo debe ser:

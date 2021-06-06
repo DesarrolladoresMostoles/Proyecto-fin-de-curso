@@ -2,6 +2,7 @@
 package vista;
 
 import dao.certificadoDao;
+import entidades.Area;
 import entidades.Certificado;
 import entidades.Familia;
 import java.util.List;
@@ -16,8 +17,7 @@ public class frmInicio extends javax.swing.JFrame {
   {
     initComponents();
     certificadoDao dao = new certificadoDao();
-    certificadoDao daoC = new certificadoDao();
-    List<Familia> rt = dao.getFamilias("SELECT * FROM familia");
+    List<Familia> rt = dao.getFamilias("SELECT idfamilia_fa,des_fa,vigencia_fa FROM familia ORDER BY idfamilia_fa");
     if(rt!=null)
     {
       DefaultMutableTreeNode raiz = new DefaultMutableTreeNode("Familias de Certificados");
@@ -26,14 +26,26 @@ public class frmInicio extends javax.swing.JFrame {
         DefaultMutableTreeNode nd = new DefaultMutableTreeNode();
         nd.setUserObject(String.format("%-4s - %s", String.valueOf( f.getIdFamilia() ),f.getDescripcion()));
         raiz.add(nd);
-        List<Familia> rtC = daoC.getCertificados("SELECT * FROM certificado JOIN familia ON fk_certrificado_familia=idfamilia_fa WHERE fk_certrificado_familia="+f.getIdFamilia());
-        if(rtC!=null)
+        List<Familia> rtA = dao.getAreas("SELECT idarea_ar,des_ar,idfamilia_fa,des_fa,vigencia_fa FROM area JOIN familia ON area.fk_familia_idfamilia_fa=familia.idfamilia_fa WHERE idfamilia_fa='"+f.getIdFamilia()+"'");
+        if(rtA!=null)
         {
-           for(Familia c:rtC)
+           for(Familia a:rtA)
            {
-             DefaultMutableTreeNode nd2 = new DefaultMutableTreeNode();
-             nd2.setUserObject((((Certificado)c).getIdCer()+ " - "+((Certificado)c).getNomCer()));
-             nd.add(nd2);
+             DefaultMutableTreeNode ndA = new DefaultMutableTreeNode();
+             ndA.setUserObject((((Area)a).getIdArea()+ " - "+((Area)a).getDescripcion()));
+             nd.add(ndA);
+             String  sql="SELECT idcertificado_cr,des_cr,competencia_cr,nivel_cr,regulacion_cr,fk_certificado_modulomf,idarea_ar,des_ar, idfamilia_fa,des_fa,vigencia_fa "
+                        +"FROM area JOIN familia ON area.fk_familia_idfamilia_fa=idfamilia_fa JOIN certificado ON certificado.fk_area_idarea_ar=idarea_ar WHERE idfamilia_fa='"+f.getIdFamilia()+"' AND idarea_ar='"+((Area)a).getIdArea()+"'";
+             List<Familia> rtC = dao.getCertificados(sql);
+             if(rtC!=null)
+             {
+                for(Familia c:rtC)
+                {
+                   DefaultMutableTreeNode ndC = new DefaultMutableTreeNode();
+                   ndC.setUserObject((((Certificado)c).getIdCer()+ " - "+((Certificado)c).getDescripcion()));
+                   ndA.add(ndC);
+                }
+             } 
           }
         }  
       }
@@ -51,37 +63,374 @@ public class frmInicio extends javax.swing.JFrame {
 
     jScrollPane1 = new javax.swing.JScrollPane();
     tvFamilia = new javax.swing.JTree();
+    tbbGbl = new javax.swing.JTabbedPane();
+    jPanel1 = new javax.swing.JPanel();
+    jPanel2 = new javax.swing.JPanel();
+    jPanel3 = new javax.swing.JPanel();
+    jPanel4 = new javax.swing.JPanel();
+    tbbpCer = new javax.swing.JPanel();
+    jpAreas = new javax.swing.JPanel();
+    jLabel6 = new javax.swing.JLabel();
+    tbNomAr = new javax.swing.JTextField();
+    btM_ar = new javax.swing.JButton();
+    btA_ar1 = new javax.swing.JButton();
+    cbIdAr = new javax.swing.JComboBox<>();
+    jpCer = new javax.swing.JPanel();
+    jTextField1 = new javax.swing.JTextField();
+    jLabel4 = new javax.swing.JLabel();
+    jScrollPane3 = new javax.swing.JScrollPane();
+    jTextArea2 = new javax.swing.JTextArea();
+    jLabel5 = new javax.swing.JLabel();
+    jLabel3 = new javax.swing.JLabel();
+    tbIdCer = new javax.swing.JTextField();
     jLabel1 = new javax.swing.JLabel();
+    jScrollPane2 = new javax.swing.JScrollPane();
+    jTextArea1 = new javax.swing.JTextArea();
+    btM_Cer = new javax.swing.JButton();
+    btA_Cer = new javax.swing.JButton();
+    tbNiv1 = new javax.swing.JTextField();
+    jpAreas1 = new javax.swing.JPanel();
+    jLabel8 = new javax.swing.JLabel();
+    tbNomFam = new javax.swing.JTextField();
+    chkVig = new javax.swing.JCheckBox();
+    cbIdFam = new javax.swing.JComboBox<>();
+    btM_fam = new javax.swing.JButton();
+    btA_fam = new javax.swing.JButton();
+    jLabel2 = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+    tvFamilia.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
     jScrollPane1.setViewportView(tvFamilia);
 
-    jLabel1.setText("Listado de Certificados Agrupados por Familias");
+    javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+    jPanel1.setLayout(jPanel1Layout);
+    jPanel1Layout.setHorizontalGroup(
+      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 842, Short.MAX_VALUE)
+    );
+    jPanel1Layout.setVerticalGroup(
+      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 632, Short.MAX_VALUE)
+    );
+
+    tbbGbl.addTab("Unidades de Competencia (UC)", jPanel1);
+
+    javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+    jPanel2.setLayout(jPanel2Layout);
+    jPanel2Layout.setHorizontalGroup(
+      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 842, Short.MAX_VALUE)
+    );
+    jPanel2Layout.setVerticalGroup(
+      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 632, Short.MAX_VALUE)
+    );
+
+    tbbGbl.addTab("Módulos", jPanel2);
+
+    javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+    jPanel3.setLayout(jPanel3Layout);
+    jPanel3Layout.setHorizontalGroup(
+      jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 842, Short.MAX_VALUE)
+    );
+    jPanel3Layout.setVerticalGroup(
+      jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 632, Short.MAX_VALUE)
+    );
+
+    tbbGbl.addTab("Unidades", jPanel3);
+
+    javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+    jPanel4.setLayout(jPanel4Layout);
+    jPanel4Layout.setHorizontalGroup(
+      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 842, Short.MAX_VALUE)
+    );
+    jPanel4Layout.setVerticalGroup(
+      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 632, Short.MAX_VALUE)
+    );
+
+    tbbGbl.addTab("Capacidades Profesionales", jPanel4);
+
+    jpAreas.setBorder(javax.swing.BorderFactory.createTitledBorder("Áreas de Conocimiento"));
+
+    jLabel6.setText("Clave");
+
+    btM_ar.setText("Modificar");
+    btM_ar.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btM_arActionPerformed(evt);
+      }
+    });
+
+    btA_ar1.setText("Añadir");
+
+    cbIdAr.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+    javax.swing.GroupLayout jpAreasLayout = new javax.swing.GroupLayout(jpAreas);
+    jpAreas.setLayout(jpAreasLayout);
+    jpAreasLayout.setHorizontalGroup(
+      jpAreasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jpAreasLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jLabel6)
+        .addGap(18, 18, 18)
+        .addComponent(cbIdAr, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(tbNomAr, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(jpAreasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(btM_ar, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+          .addComponent(btA_ar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    jpAreasLayout.setVerticalGroup(
+      jpAreasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jpAreasLayout.createSequentialGroup()
+        .addGroup(jpAreasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(jpAreasLayout.createSequentialGroup()
+            .addGap(14, 14, 14)
+            .addGroup(jpAreasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel6)
+              .addComponent(cbIdAr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(tbNomAr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addGroup(jpAreasLayout.createSequentialGroup()
+            .addComponent(btM_ar)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btA_ar1)))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+
+    jpCer.setBorder(javax.swing.BorderFactory.createTitledBorder("Certificados"));
+
+    jLabel4.setText("Regulación");
+
+    jTextArea2.setColumns(20);
+    jTextArea2.setRows(5);
+    jScrollPane3.setViewportView(jTextArea2);
+
+    jLabel5.setText("Clave");
+
+    jLabel3.setText("Nivel");
+
+    jLabel1.setText("Competencia General");
+
+    jTextArea1.setColumns(20);
+    jTextArea1.setRows(5);
+    jScrollPane2.setViewportView(jTextArea1);
+
+    btM_Cer.setText("Modificar");
+    btM_Cer.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btM_CerActionPerformed(evt);
+      }
+    });
+
+    btA_Cer.setText("Añadir");
+    btA_Cer.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btA_CerActionPerformed(evt);
+      }
+    });
+
+    javax.swing.GroupLayout jpCerLayout = new javax.swing.GroupLayout(jpCer);
+    jpCer.setLayout(jpCerLayout);
+    jpCerLayout.setHorizontalGroup(
+      jpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jpCerLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(jpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(jpCerLayout.createSequentialGroup()
+            .addComponent(jLabel1)
+            .addGap(667, 667, 667))
+          .addGroup(jpCerLayout.createSequentialGroup()
+            .addGroup(jpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(jpCerLayout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tbIdCer, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tbNiv1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(jScrollPane2)
+              .addGroup(jpCerLayout.createSequentialGroup()
+                .addComponent(jLabel4)
+                .addGap(0, 0, Short.MAX_VALUE))
+              .addComponent(jScrollPane3))
+            .addContainerGap())))
+      .addGroup(jpCerLayout.createSequentialGroup()
+        .addGap(270, 270, 270)
+        .addComponent(btA_Cer, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(31, 31, 31)
+        .addComponent(btM_Cer, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(0, 0, Short.MAX_VALUE))
+    );
+    jpCerLayout.setVerticalGroup(
+      jpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCerLayout.createSequentialGroup()
+        .addGroup(jpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(jLabel5)
+          .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jLabel3)
+          .addComponent(tbIdCer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(tbNiv1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel1)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel4)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(jpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(btA_Cer)
+          .addComponent(btM_Cer))
+        .addContainerGap(15, Short.MAX_VALUE))
+    );
+
+    jpAreas1.setBorder(javax.swing.BorderFactory.createTitledBorder("Familias Profesionales"));
+
+    jLabel8.setText("Clave");
+
+    chkVig.setText("No Vigente");
+
+    cbIdFam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+    btM_fam.setText("Modificar");
+    btM_fam.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btM_famActionPerformed(evt);
+      }
+    });
+
+    btA_fam.setText("Añadir");
+
+    javax.swing.GroupLayout jpAreas1Layout = new javax.swing.GroupLayout(jpAreas1);
+    jpAreas1.setLayout(jpAreas1Layout);
+    jpAreas1Layout.setHorizontalGroup(
+      jpAreas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jpAreas1Layout.createSequentialGroup()
+        .addGap(16, 16, 16)
+        .addComponent(jLabel8)
+        .addGap(18, 18, 18)
+        .addGroup(jpAreas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(chkVig)
+          .addGroup(jpAreas1Layout.createSequentialGroup()
+            .addComponent(cbIdFam, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(tbNomFam, javax.swing.GroupLayout.PREFERRED_SIZE, 495, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(jpAreas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(btM_fam, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btA_fam, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addContainerGap(19, Short.MAX_VALUE))
+    );
+    jpAreas1Layout.setVerticalGroup(
+      jpAreas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jpAreas1Layout.createSequentialGroup()
+        .addGroup(jpAreas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addGroup(jpAreas1Layout.createSequentialGroup()
+            .addGroup(jpAreas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel8)
+              .addComponent(cbIdFam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(tbNomFam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(chkVig))
+          .addGroup(jpAreas1Layout.createSequentialGroup()
+            .addComponent(btM_fam)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(btA_fam)))
+        .addContainerGap(26, Short.MAX_VALUE))
+    );
+
+    jLabel2.setForeground(new java.awt.Color(255, 0, 51));
+    jLabel2.setText("NOTA IMPORTYANTE LA FUNCIÓN AÑADIR SACA UN NUEVO FORMULARIO CON LOS CAMPOS NECESARIOS EN CADA CASO");
+
+    javax.swing.GroupLayout tbbpCerLayout = new javax.swing.GroupLayout(tbbpCer);
+    tbbpCer.setLayout(tbbpCerLayout);
+    tbbpCerLayout.setHorizontalGroup(
+      tbbpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(tbbpCerLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(tbbpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jpCer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addGroup(tbbpCerLayout.createSequentialGroup()
+            .addGroup(tbbpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(jpAreas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jpAreas1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 0, Short.MAX_VALUE)))
+        .addContainerGap())
+      .addGroup(tbbpCerLayout.createSequentialGroup()
+        .addGap(94, 94, 94)
+        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 627, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    tbbpCerLayout.setVerticalGroup(
+      tbbpCerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(tbbpCerLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jpCer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jpAreas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(18, 18, 18)
+        .addComponent(jpAreas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(87, Short.MAX_VALUE))
+    );
+
+    jpAreas1.getAccessibleContext().setAccessibleName("Familias profesionales");
+
+    tbbGbl.addTab("Certificado", tbbpCer);
+
+    tbbGbl.setSelectedIndex(4);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
-        .addGap(20, 20, 20)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jLabel1)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addContainerGap(537, Short.MAX_VALUE))
+        .addContainerGap()
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(tbbGbl)
+        .addContainerGap())
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
-        .addGap(14, 14, 14)
-        .addComponent(jLabel1)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(29, Short.MAX_VALUE))
+        .addContainerGap()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(tbbGbl)
+          .addComponent(jScrollPane1))
+        .addContainerGap())
     );
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void btM_arActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btM_arActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_btM_arActionPerformed
+
+  private void btM_famActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btM_famActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_btM_famActionPerformed
+
+  private void btM_CerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btM_CerActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_btM_CerActionPerformed
+
+  private void btA_CerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btA_CerActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_btA_CerActionPerformed
 
   /**
    * @param args the command line arguments
@@ -113,14 +462,47 @@ public class frmInicio extends javax.swing.JFrame {
     /* Create and display the form */
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
-        new frmInicio().setVisible(true);
+          new frmInicio().setVisible(true);
       }
     });
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton btA_Cer;
+  private javax.swing.JButton btA_ar1;
+  private javax.swing.JButton btA_fam;
+  private javax.swing.JButton btM_Cer;
+  private javax.swing.JButton btM_ar;
+  private javax.swing.JButton btM_fam;
+  private javax.swing.JComboBox<String> cbIdAr;
+  private javax.swing.JComboBox<String> cbIdFam;
+  private javax.swing.JCheckBox chkVig;
   private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel2;
+  private javax.swing.JLabel jLabel3;
+  private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
+  private javax.swing.JLabel jLabel6;
+  private javax.swing.JLabel jLabel8;
+  private javax.swing.JPanel jPanel1;
+  private javax.swing.JPanel jPanel2;
+  private javax.swing.JPanel jPanel3;
+  private javax.swing.JPanel jPanel4;
   private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JScrollPane jScrollPane2;
+  private javax.swing.JScrollPane jScrollPane3;
+  private javax.swing.JTextArea jTextArea1;
+  private javax.swing.JTextArea jTextArea2;
+  private javax.swing.JTextField jTextField1;
+  private javax.swing.JPanel jpAreas;
+  private javax.swing.JPanel jpAreas1;
+  private javax.swing.JPanel jpCer;
+  private javax.swing.JTextField tbIdCer;
+  private javax.swing.JTextField tbNiv1;
+  private javax.swing.JTextField tbNomAr;
+  private javax.swing.JTextField tbNomFam;
+  private javax.swing.JTabbedPane tbbGbl;
+  private javax.swing.JPanel tbbpCer;
   private javax.swing.JTree tvFamilia;
   // End of variables declaration//GEN-END:variables
 }
