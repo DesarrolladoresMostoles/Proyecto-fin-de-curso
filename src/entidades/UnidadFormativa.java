@@ -9,9 +9,9 @@ public class UnidadFormativa {
     
     // Atributos de la clase
     
-    String codigo;
-    String descripcion;
-    int horas;
+    private String codigo;
+    private String descripcion;
+    private int horas;
     
     // Constructores (un constructor vacío y otro con todos los atributos)
 

@@ -1,11 +1,48 @@
 
 package vista;
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
+import dao.UnidadFormativaDao;
+
+import entidades.UnidadFormativa;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author borda
  */
 public class UnidadFormativaConsulta extends javax.swing.JFrame {
+    
+    //metodo para rellenar tabla
+    
+    public void RellenarTabla() throws SQLException{
+        int horas = Integer.parseInt(txtHorasCon.getText()); // capturo el string que ocupa el campo txthoras y lo convierto en int
+        UnidadFormativa uf = new UnidadFormativa(txtCodigoCon.getText(),txtDescripcionCon.getText(),horas); // creo un objeto de la clase UnidadFormativa y le doy los valores de la pantalla.
+        
+        UnidadFormativaDao ufd = new UnidadFormativaDao(); // creo un objeto de la clase UnidadFormativaDao
+        
+        ArrayList<UnidadFormativa> aluf = ufd.ConsultaUFDao(uf.getCodigo(), uf.getDescripcion()); // creo un arraylist y lo reyeno usando el metodo consulta de la clases UnidadFormativaDao pasandole los valores del objeto creado antes de UnidadFormativa.
+                  
+        DefaultTableModel modelo = new DefaultTableModel(); //creo un objeto tabla.
+        
+        //creo un bucle for para con el arraylist obtenido antes rellenar los campos de la tabla.
+    
+        for (int i = 0; i < aluf.size(); i++) {            
+            modelo.addRow(new Object[]{aluf.get(i).getCodigo(),aluf.get(i).getDescripcion(),aluf.get(i).getHoras()});     // doy a cada objeto fila los valores del arraylist.       
+        }
+        
+        try {
+            ufd.ConsultaUFDao(uf.getCodigo(), uf.getDescripcion());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al realizar la busqueda seleccionada." + ex.getMessage());
+        }     
+        
+        
+    }
 
     /**
      * Creates new form UnidadFormativaConsulta
@@ -43,13 +80,13 @@ public class UnidadFormativaConsulta extends javax.swing.JFrame {
 
         tblUnidadesFormativasCon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Codigo", "Descripcion", "Horas"
             }
         ));
         jScrollPane1.setViewportView(tblUnidadesFormativasCon);
@@ -59,8 +96,18 @@ public class UnidadFormativaConsulta extends javax.swing.JFrame {
         jLabel3.setText("Horas");
 
         btnBuscarCon.setText("BUSCAR");
+        btnBuscarCon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarConActionPerformed(evt);
+            }
+        });
 
         btnNuevoCon.setText("NUEVO");
+        btnNuevoCon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoConActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,6 +165,27 @@ public class UnidadFormativaConsulta extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnBuscarConActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarConActionPerformed
+        try {
+            RellenarTabla();            
+        } catch (SQLException ex) {
+            Logger.getLogger(UnidadFormativaConsulta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnBuscarConActionPerformed
+
+    private void btnNuevoConActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoConActionPerformed
+        int horas = Integer.parseInt(txtHorasCon.getText());
+        UnidadFormativa uf = new UnidadFormativa(txtCodigoCon.getText(),txtDescripcionCon.getText(),horas);
+        
+        UnidadFormativaDao ufd = new UnidadFormativaDao();
+        
+        try {
+            ufd.AñadirUFDao(uf);
+        } catch (SQLException ex) {
+            Logger.getLogger(UnidadFormativaConsulta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnNuevoConActionPerformed
 
     /**
      * @param args the command line arguments
